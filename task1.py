@@ -27,8 +27,8 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
     jobs = [PrintJob(**job) for job in print_jobs]
     printer = PrinterConstraints(**constraints)
 
-    # Сортування: спочатку за пріоритетом (від 1 до 3), потім за часом друку (від більшого)
-    jobs.sort(key=lambda job: (job.priority, -job.print_time))
+    # Сортування за пріоритетом
+    jobs.sort(key=lambda job: job.priority)
 
     print_order = []
     total_time = 0
@@ -45,7 +45,7 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
             j += 1
 
         if not group:
-            # якщо жодну модель не вдалося додати через обмеження — пропускаємо одну
+            # пропуск моделі
             group.append(jobs[i])
             group_volume = jobs[i].volume
             j = i + 1
@@ -55,7 +55,7 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
         total_time += group_time
         print_order.extend(job.id for job in group)
 
-        # Перейти до наступної групи
+
         i += len(group)
 
     return {
